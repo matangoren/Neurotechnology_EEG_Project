@@ -1,16 +1,20 @@
-# This is a sample Python script.
+from pylsl import StreamInlet, resolve_stream
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# first resolve an EEG stream on the lab network
+print("looking for an EEG stream...")
+streams = resolve_stream('type', 'EEG')
 
+# create a new inlet to read from the stream
+inlet = StreamInlet(streams[0])
+inlet.open_stream()
+    # get a new sample (you can also omit the timestamp part if you're not
+    # interested in it)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+samples, timestamps = inlet.pull_chunk()
+print(timestamps, samples)
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# while True:
+#     # get a new sample (you can also omit the timestamp part if you're not
+#     # interested in it)
+#     sample, timestamp = inlet.pull_sample()
+#     print(timestamp, sample)
