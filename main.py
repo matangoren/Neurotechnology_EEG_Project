@@ -1,22 +1,28 @@
 from pylsl import StreamInlet, resolve_stream
 import time
+import pandas as pd
+import matplotlib.pyplot as plt
 
-# first resolve an EEG stream on the lab network
 print("looking for an EEG stream...")
 streams = resolve_stream('type', 'EEG')
 
 # create a new inlet to read from the stream
 inlet = StreamInlet(streams[0])
 inlet.open_stream()
-    # get a new sample (you can also omit the timestamp part if you're not
-    # interested in it)
 
-samples, timestamps = inlet.pull_chunk(1)
-print(samples)
 
-t_end = time.time() + 60 * 15
+samples, timestamps = inlet.pull_chunk(5)
 
-while time.time() < t_end:
+# form dataframe from data
+df = pd.DataFrame(samples, columns=["Gray", "Purple", "Blue", "Green"])
+
+# plot multiple columns such as population and year from dataframe
+df.plot(y=["Gray", "Purple", "Blue", "Green"],
+        kind="line", figsize=(10, 10), use_index=True)
+
+# display plot
+plt.show()
+
 
 
 
