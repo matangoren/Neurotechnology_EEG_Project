@@ -1,5 +1,3 @@
-import base64
-
 import dash
 from dash import html, dcc
 import pandas as pd
