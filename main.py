@@ -25,7 +25,6 @@ plt.show()
 
 
 
-
 # while True:
 #     # get a new sample (you can also omit the timestamp part if you're not
 #     # interested in it)
