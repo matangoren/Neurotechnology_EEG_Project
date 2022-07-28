@@ -4,6 +4,12 @@ import pandas as pd
 import numpy as np
 from dash.dependencies import Output, Input
 
+from sklearn.svm import SVC
+import pickle
+
+model_file = "data/svm_model.pkl"
+model = pickle.load(open(model_file, 'rb'))
+
 data = pd.read_csv("avocado.csv")
 data["Date"] = pd.to_datetime(data["Date"], format="%Y-%m-%d")
 data.sort_values("Date", inplace=True)
@@ -78,20 +84,6 @@ app.layout = html.Div(
                         html.Button('Calculate', id='submit-val', n_clicks=0, className="submit_button"),
                     ]
                 ),
-                # html.Div(
-                #     children=[
-                #         html.Div(
-                #             children="Date Range", className="menu-title"
-                #         ),
-                #         dcc.DatePickerRange(
-                #             id="date-range",
-                #             min_date_allowed=data.Date.min().date(),
-                #             max_date_allowed=data.Date.max().date(),
-                #             start_date=data.Date.min().date(),
-                #             end_date=data.Date.max().date(),
-                #         ),
-                #     ]
-                # ),
             ],
             className="menu",
         ),
