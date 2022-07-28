@@ -75,3 +75,24 @@ body {
     color: #079A82;
 }
 
+
+
+.submit_button {
+  background-color: white; /* Green */
+  border: 2px solid #079A82;
+  color: #079A82;
+  padding: 8px 26px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border-radius:4px;
+}
+
+.submit_button:hover{
+  background-color: #079A82;
+  color: white;
+}
+

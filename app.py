@@ -8,6 +8,9 @@ data = pd.read_csv("avocado.csv")
 data["Date"] = pd.to_datetime(data["Date"], format="%Y-%m-%d")
 data.sort_values("Date", inplace=True)
 
+data_pain = pd.read_csv("data/pain_db.csv")
+
+
 external_stylesheets = [
     {
         "href": "https://fonts.googleapis.com/css2?"
@@ -17,7 +20,7 @@ external_stylesheets = [
 ]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
-app.title = "EEG Analytics"
+app.title = "Pain Intensity Analytics"
 
 app.layout = html.Div(
     children=[
@@ -27,7 +30,7 @@ app.layout = html.Div(
                     html.Img(src=app.get_asset_url('green_monitor.png'), style={'height': '46px', 'width':'46px'})
                 ], className='header-emoji'),
                 html.H1(
-                    children="EEG Analytics", className="header-title"
+                    children="Pain Intensity Analytics", className="header-title"
                 ),
                 html.P(
                     children="Analyze the awareness and pain sensitivity of patients",
@@ -40,14 +43,14 @@ app.layout = html.Div(
             children=[
                 html.Div(
                     children=[
-                        html.Div(children="Region", className="menu-title"),
+                        html.Div(children="Patient ID", className="menu-title"),
                         dcc.Dropdown(
                             id="region-filter",
                             options=[
-                                {"label": region, "value": region}
-                                for region in np.sort(data.region.unique())
+                                {"label": patient, "value": patient}
+                                for patient in np.sort(data_pain['Subject-ID'].unique())
                             ],
-                            value="Albany",
+                            # value="Albany",
                             clearable=False,
                             className="dropdown",
                         ),
@@ -59,10 +62,10 @@ app.layout = html.Div(
                         dcc.Dropdown(
                             id="type-filter",
                             options=[
-                                {"label": avocado_type, "value": avocado_type}
-                                for avocado_type in data.type.unique()
+                                {"label": 'Live', "value": 'Live'},
+                                {"label": 'Recorded', "value": 'Recorded'}
                             ],
-                            value="organic",
+                            value="Live",
                             clearable=False,
                             searchable=False,
                             className="dropdown",
@@ -70,19 +73,25 @@ app.layout = html.Div(
                     ],
                 ),
                 html.Div(
+                    style={"padding-top":"28px"},
                     children=[
-                        html.Div(
-                            children="Date Range", className="menu-title"
-                        ),
-                        dcc.DatePickerRange(
-                            id="date-range",
-                            min_date_allowed=data.Date.min().date(),
-                            max_date_allowed=data.Date.max().date(),
-                            start_date=data.Date.min().date(),
-                            end_date=data.Date.max().date(),
-                        ),
+                        html.Button('Calculate', id='submit-val', n_clicks=0, className="submit_button"),
                     ]
                 ),
+                # html.Div(
+                #     children=[
+                #         html.Div(
+                #             children="Date Range", className="menu-title"
+                #         ),
+                #         dcc.DatePickerRange(
+                #             id="date-range",
+                #             min_date_allowed=data.Date.min().date(),
+                #             max_date_allowed=data.Date.max().date(),
+                #             start_date=data.Date.min().date(),
+                #             end_date=data.Date.max().date(),
+                #         ),
+                #     ]
+                # ),
             ],
             className="menu",
         ),
