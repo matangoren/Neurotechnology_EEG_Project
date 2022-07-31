@@ -53,7 +53,8 @@ emp_g = {
         }
     }
 }
-
+global button_counter
+button_counter = 0
 
 def get_live_data(patient=-1):
     if patient == -1:
@@ -66,8 +67,17 @@ def get_live_data(patient=-1):
     # return filtered_live_data.to_dict('records'), predict(filtered_live_data, n)
 
 
+def button_check(n):
+    global button_counter
+    if n <= button_counter:
+        return 0
+    else:
+        button_counter = n
+        return n
+
+
 def estimate(patient=-1, n=0):
-    if n == 0 or patient == -1:
+    if button_check(n) == 0 or patient == -1:
         return
     mask = (
         (live_data['Subject_ID'] == patient)
