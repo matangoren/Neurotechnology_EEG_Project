@@ -1,5 +1,7 @@
 import dash
-from dash import html, dcc
+from dash import html, dcc, dash_table
+import dash_bootstrap_components as dbc
+
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -35,15 +37,38 @@ pain_means = data_pain.groupby(['Subject_ID', 'Label'], as_index=False).mean()
 
 pain_means = pd.DataFrame(pain_means, columns=features)
 
-live_data = data_pain.groupby(['Subject_ID'], as_index=False).first()
+live_data = data_pain.groupby(['Subject_ID'], as_index=False).first().drop('Label', axis=1)
 
-clusters = pd.concat([data_pain, live_data]).drop_duplicates(keep=False)
+
+# data_pain.replace([np.inf, -np.inf], np.nan, inplace=True)
+# # Drop rows with NaN
+# data_pain.dropna(inplace=True)
+
+empty_g = {
+    "layout": {
+        "xaxis": {
+            "visible": False
+        },
+        "yaxis": {
+            "visible": False
+        }
+    }
+}
+
+def getData(patient=-1):
+    if patient == -1:
+        return
+    mask = (
+        (live_data['Subject_ID'] == patient)
+    )
+    filtered_live_data = live_data.loc[mask, :]
+    return filtered_live_data.to_dict('records')
 
 
 external_stylesheets = [
     {
         "href": "https://fonts.googleapis.com/css2?"
-        "family=Lato:wght@400;700&display=swap",
+                "family=Lato:wght@400;700&display=swap",
         "rel": "stylesheet",
     },
 ]
@@ -56,7 +81,7 @@ app.layout = html.Div(
         html.Div(
             children=[
                 html.P(children=[
-                    html.Img(src=app.get_asset_url('green_monitor.png'), style={'height': '46px', 'width':'46px'})
+                    html.Img(src=app.get_asset_url('green_monitor.png'), style={'height': '46px', 'width': '46px'})
                 ], className='header-emoji'),
                 html.H1(
                     children="Pain Intensity Analytics", className="header-title"
@@ -102,7 +127,7 @@ app.layout = html.Div(
                     ],
                 ),
                 html.Div(
-                    style={"padding-top":"28px"},
+                    style={"padding-top": "28px"},
                     children=[
                         html.Button('Calculate', id='submit-val', n_clicks=0, className="submit_button"),
                     ]
@@ -112,6 +137,28 @@ app.layout = html.Div(
         ),
         html.Div(
             children=[
+                html.Div(
+                    children=dbc.Container([
+                            dash_table.DataTable(
+                                sort_action='native',
+                                id='table',
+                                css=[{
+                                    'selector': '.dash-cell div.dash-cell-value',
+                                    'rule': 'display: inline-table; white-space: inherit; overflow: inherit; '
+                                            'text-overflow: inherit;'
+                                }],
+                                data=getData(),
+                                style_table={'overflowX': 'auto'},
+                                style_cell={
+                                    'height': 'auto',
+                                    # all three widths are needed
+                                    'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
+                                    'whiteSpace': 'normal'
+                                }
+                            )]
+                        ),
+                    className="card",
+                ),
                 html.Div(
                     children=dcc.Graph(
                         id="CH22_Sim_corr-chart",
@@ -190,8 +237,8 @@ app.layout = html.Div(
 
 
 @app.callback(
-    [Output("CH22_Sim_corr-chart", "figure"), Output("CH22_S_sd-chart", "figure"), Output("CH23_A_PEAK-chart", "figure")
-     , Output("CH23_Sim_corr-chart", "figure"), Output("CH23_Sim_MutInfo-chart", "figure"),
+    [Output('table', 'data'), Output("CH22_Sim_corr-chart", "figure"), Output("CH22_S_sd-chart", "figure"), Output("CH23_A_PEAK-chart", "figure")
+        , Output("CH23_Sim_corr-chart", "figure"), Output("CH23_Sim_MutInfo-chart", "figure"),
      Output("CH24_Sim_corr-chart", "figure"), Output("CH25_meanRR-chart", "figure"),
      Output("CH25_rmssd-chart", "figure"), Output("CH26_A_PEAK-chart", "figure"), Output("CH26_Sim_corr-chart", "figure"
                                                                                          )],
@@ -200,9 +247,10 @@ app.layout = html.Div(
         Input("type-filter", "value"),
     ],
 )
+
 def update_charts(patient, d_type):
     if d_type == 'Live':
-        return {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+        return getData(patient), empty_g, empty_g, empty_g, empty_g, empty_g, empty_g, empty_g, empty_g, empty_g, empty_g
     mask = (
         (pain_means['Subject_ID'] == patient)
     )
@@ -374,8 +422,12 @@ def update_charts(patient, d_type):
             "colorway": ["#2DE1D5"],
         },
     }
-    return CH22_Sim_corr_figure, CH22_S_sd_figure, CH23_A_PEAK_figure, CH23_Sim_corr_figure, CH23_Sim_MutInfo_figure, \
-           CH24_Sim_corr_figure, CH25_meanRR_figure, CH25_rmssd_figure, CH26_A_PEAK_figure, CH26_Sim_corr_figure
+    return getData(), CH22_Sim_corr_figure, CH22_S_sd_figure, CH23_A_PEAK_figure, CH23_Sim_corr_figure, \
+           CH23_Sim_MutInfo_figure, CH24_Sim_corr_figure, CH25_meanRR_figure, CH25_rmssd_figure, CH26_A_PEAK_figure, \
+           CH26_Sim_corr_figure
+
+
+
 
 
 if __name__ == "__main__":
