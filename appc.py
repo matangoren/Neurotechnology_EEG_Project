@@ -44,7 +44,7 @@ live_data = data_pain.groupby(['Subject_ID'], as_index=False).first().drop('Labe
 # # Drop rows with NaN
 # data_pain.dropna(inplace=True)
 
-empty_g = {
+emp_g = {
     "layout": {
         "xaxis": {
             "visible": False
@@ -55,7 +55,8 @@ empty_g = {
     }
 }
 
-def getData(patient=-1):
+
+def get_live_data(patient=-1):
     if patient == -1:
         return
     mask = (
@@ -64,6 +65,15 @@ def getData(patient=-1):
     filtered_live_data = live_data.loc[mask, :]
     return filtered_live_data.to_dict('records')
 
+
+def predict(data):
+    ans = model.predict(data.iloc[:, 1:].to_numpy())
+    if ans == 0:
+        return "No Pain"
+    elif ans == 2:
+        return "Mild Pain"
+    else:
+        return "Severe Pain"
 
 external_stylesheets = [
     {
@@ -76,7 +86,11 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 app.title = "Pain Intensity Analytics"
 
-app.layout = html.Div(
+app.layout = html.Div(style={
+    'background-image': 'url("/assets/background.png")',
+    'background-repeat': 'no-repeat',
+
+    },
     children=[
         html.Div(
             children=[
@@ -107,6 +121,7 @@ app.layout = html.Div(
                             # value="Albany",
                             clearable=False,
                             className="dropdown",
+                            style={"width": "150%"},
                         ),
                     ]
                 ),
@@ -123,6 +138,7 @@ app.layout = html.Div(
                             clearable=False,
                             searchable=False,
                             className="dropdown",
+                            style={"width": "150%"},
                         ),
                     ],
                 ),
@@ -147,14 +163,22 @@ app.layout = html.Div(
                                     'rule': 'display: inline-table; white-space: inherit; overflow: inherit; '
                                             'text-overflow: inherit;'
                                 }],
-                                data=getData(),
+                                data=get_live_data(),
                                 style_table={'overflowX': 'auto'},
+                                style_header={
+                                    'backgroundColor': '#079A82',
+                                    'color': 'white'
+                                },
+                                style_data={
+                                    'backgroundColor': 'rgb(50, 50, 50)',
+                                    'color': 'white'
+                                },
                                 style_cell={
                                     'height': 'auto',
                                     # all three widths are needed
                                     'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
                                     'whiteSpace': 'normal'
-                                }
+                                },
                             )]
                         ),
                     className="card",
@@ -250,7 +274,8 @@ app.layout = html.Div(
 
 def update_charts(patient, d_type):
     if d_type == 'Live':
-        return getData(patient), empty_g, empty_g, empty_g, empty_g, empty_g, empty_g, empty_g, empty_g, empty_g, empty_g
+        return get_live_data(
+            patient), emp_g, emp_g, emp_g, emp_g, emp_g, emp_g, emp_g, emp_g, emp_g, emp_g
     mask = (
         (pain_means['Subject_ID'] == patient)
     )
@@ -266,7 +291,7 @@ def update_charts(patient, d_type):
         ],
         "layout": {
             "title": {
-                "text": "Electromyography of Musculus Zygomaticus major - Sim Corr",
+                "text": "Electromyography of Musculus Zygomaticus Major - Sim Corr",
                 "x": 0.05,
                 "xanchor": "left",
             },
@@ -285,7 +310,7 @@ def update_charts(patient, d_type):
             },
         ],
         "layout": {
-            "title": {"text": "Electromyography of Musculus Zygomaticus major - SSD", "x": 0.05, "xanchor": "left"},
+            "title": {"text": "Electromyography of Musculus Zygomaticus Major - SSD", "x": 0.05, "xanchor": "left"},
             "xaxis": {"fixedrange": True},
             "yaxis": {"fixedrange": True},
             "colorway": ["#17B897"],
@@ -422,7 +447,7 @@ def update_charts(patient, d_type):
             "colorway": ["#2DE1D5"],
         },
     }
-    return getData(), CH22_Sim_corr_figure, CH22_S_sd_figure, CH23_A_PEAK_figure, CH23_Sim_corr_figure, \
+    return get_live_data(), CH22_Sim_corr_figure, CH22_S_sd_figure, CH23_A_PEAK_figure, CH23_Sim_corr_figure, \
            CH23_Sim_MutInfo_figure, CH24_Sim_corr_figure, CH25_meanRR_figure, CH25_rmssd_figure, CH26_A_PEAK_figure, \
            CH26_Sim_corr_figure
 
