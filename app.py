@@ -194,7 +194,8 @@ app.layout = html.Div(style={
                                 'height': 'auto',
                                 # all three widths are needed
                                 'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
-                                'whiteSpace': 'normal'
+                                'whiteSpace': 'normal',
+                                'textAlign': 'center',
                             },
                         )]
                     ),
@@ -221,88 +222,66 @@ app.layout = html.Div(style={
                             style_data={
                                 'backgroundColor': 'transparent',
                                 'color': 'white',
-                                'border': 'none'
+                                'border': 'none',
+                                'height': '60px',
+                                'vertical-align': 'middle',
                             },
                             style_cell={
-                                'height': '100',
+                                'height': '50px',
                                 # all three widths are needed
                                 'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
                                 'whiteSpace': 'normal',
                                 'textAlign': 'center',
                                 'font_size': '26px',
+                                'vertical-align': 'middle',
                             },
                         )]
                     ),
                     className="card",
                 ),
                 html.Div(
-                    children=dcc.Graph(
-                        id="CH22_Sim_corr-chart",
-                        config={"displayModeBar": False},
-                    ),
-                    className="card",
-                ),
-                html.Div(
-                    children=dcc.Graph(
-                        id="CH22_S_sd-chart",
-                        config={"displayModeBar": False},
-                    ),
-                    className="card",
-                ),
-                html.Div(
-                    children=dcc.Graph(
-                        id="CH23_A_PEAK-chart",
-                        config={"displayModeBar": False},
-                    ),
-                    className="card",
-                ),
-                html.Div(
-                    children=dcc.Graph(
-                        id="CH23_Sim_corr-chart",
-                        config={"displayModeBar": False},
-                    ),
-                    className="card",
-                ),
-                html.Div(
-                    children=dcc.Graph(
-                        id="CH23_Sim_MutInfo-chart",
-                        config={"displayModeBar": False},
-                    ),
-                    className="card",
-                ),
-                html.Div(
-                    children=dcc.Graph(
-                        id="CH24_Sim_corr-chart",
-                        config={"displayModeBar": False},
-                    ),
-                    className="card",
-                ),
-                html.Div(
-                    children=dcc.Graph(
-                        id="CH25_meanRR-chart",
-                        config={"displayModeBar": False},
-                    ),
-                    className="card",
-                ),
-                html.Div(
-                    children=dcc.Graph(
-                        id="CH25_rmssd-chart",
-                        config={"displayModeBar": False},
-                    ),
-                    className="card",
-                ),
-                html.Div(
-                    children=dcc.Graph(
-                        id="CH26_A_PEAK-chart",
-                        config={"displayModeBar": False},
-                    ),
-                    className="card",
-                ),
-                html.Div(
-                    children=dcc.Graph(
-                        id="CH26_Sim_corr-chart",
-                        config={"displayModeBar": False},
-                    ),
+                    children=[
+                        dcc.Graph(
+                            id="CH22_Sim_corr-chart",
+                            config={"displayModeBar": False},
+                        ),
+                        dcc.Graph(
+                            id="CH22_S_sd-chart",
+                            config={"displayModeBar": False},
+                        ),
+                        dcc.Graph(
+                            id="CH23_A_PEAK-chart",
+                            config={"displayModeBar": False},
+                        ),
+                        dcc.Graph(
+                            id="CH23_Sim_corr-chart",
+                            config={"displayModeBar": False},
+                        ),
+                        dcc.Graph(
+                            id="CH23_Sim_MutInfo-chart",
+                            config={"displayModeBar": False},
+                        ),
+                        dcc.Graph(
+                            id="CH24_Sim_corr-chart",
+                            config={"displayModeBar": False},
+                        ),
+                        dcc.Graph(
+                            id="CH25_meanRR-chart",
+                            config={"displayModeBar": False},
+                        ),
+                        dcc.Graph(
+                            id="CH25_rmssd-chart",
+                            config={"displayModeBar": False},
+                        ),
+                        dcc.Graph(
+                            id="CH26_A_PEAK-chart",
+                            config={"displayModeBar": False},
+                        ),
+                        dcc.Graph(
+                            id="CH26_Sim_corr-chart",
+                            config={"displayModeBar": False},
+                        ),
+                    ],
                     className="card",
                 ),
             ],
